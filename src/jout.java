@@ -36,8 +36,9 @@ public final class jout {
         }
     }
 
-    private static ThreadPoolExecutor createThreadPool(final int n) {
-        final ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(n);
+    private static ThreadPoolExecutor createThreadPool() {
+        final int cores = Runtime.getRuntime().availableProcessors();
+        final ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(cores);
         threadPool.setThreadFactory(new ThreadFactory() {
             @Override
             public Thread newThread(final Runnable runnable) {
@@ -200,11 +201,10 @@ public final class jout {
             System.exit(1);
         }
 
-        final int cores = Runtime.getRuntime().availableProcessors();
-        final int threadCount = cores * 100;
-        if (files.length >= threadCount) { // multi thread this
-            final List<List<Object>> slices   = slice(files, threadCount);
-            final ThreadPoolExecutor pool     = createThreadPool(threadCount);
+        final int sliceCount = 512; // @NOTE If this value is larger that around ~700 than we can not execute 'javap' The reason for that is that the commandline arguments are too long.
+        if (files.length >= sliceCount) { // multi thread this
+            final List<List<Object>> slices   = slice(files, sliceCount);
+            final ThreadPoolExecutor pool     = createThreadPool();
             final ArrayList<Future<?>> futures = new ArrayList<>();
 
             final AtomicLong instCount    = new AtomicLong();
