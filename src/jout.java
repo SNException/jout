@@ -165,9 +165,7 @@ public final class jout {
         }
     }
 
-    private static OutFilesInfo analyzeOutFiles(final Path dir) {
-        final String[] files = listAllFiles(dir, ".class");
-
+    private static OutFilesInfo analyzeOutFiles(final String[] files) {
         long binSize             = 0;
         long outCount            = files.length;
         long innerClassCount     = 0;
@@ -291,7 +289,7 @@ public final class jout {
         System.out.println();
 
         final ByteCodeInfo byteCodeInfo = analyzeByteCode(files);
-        final OutFilesInfo outFilesInfo = analyzeOutFiles(baseOutDirectory);
+        final OutFilesInfo outFilesInfo = analyzeOutFiles(files);
 
         System.out.printf("Total output size is in kilobytes        : %.1f\n", outFilesInfo.binSize / 1024.0d);
         System.out.printf("Total amount of output files             : %s\n", outFilesInfo.outCount);
