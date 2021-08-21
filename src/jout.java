@@ -97,6 +97,7 @@ public final class jout {
                 buffer.append(line).append("\n");
             }
         } catch (final IOException ex) {
+            ex.printStackTrace(System.err);
             return null;
         }
         return process.exitValue();
@@ -199,7 +200,9 @@ public final class jout {
             System.exit(1);
         }
 
-        final int sliceCount = 512; // @NOTE If this value is larger that around ~700 than we can not execute 'javap' The reason for that is that the commandline arguments are too long.
+        // @NOTE If this value is larger that around ~700 than we can not execute 'javap' The reason for that is that the commandline arguments are too long.
+        // It looks like that more class files you have the smaller this value must be in order to avoid that error?!
+        final int sliceCount = 256;
         if (files.length >= sliceCount) { // multi thread this
             final List<List<Object>> slices   = slice(files, sliceCount);
             final ThreadPoolExecutor pool     = createThreadPool();
